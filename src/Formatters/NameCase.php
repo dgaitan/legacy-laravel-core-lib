@@ -1,10 +1,9 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Formatters;
+namespace DGaitan\LaravelCoreLib\Formatters;
 
 
-class NameCase
-{
+class NameCase {
     public static $defaultDelimiters = [
         ' ', '-', "O'", "O’", "L'", "L’", "D'", "D’", 'St.', 'Mc', 'Mac', '(', '"', '*', '.'
     ];
@@ -31,8 +30,7 @@ class NameCase
      * @param array|null $forceUppercase Force these words to be lowercase.
      * @return string
      */
-    public static function format($str, $delimiters = null, $forceLowercase = null, $forceUppercase = null)
-    {
+    public static function format($str, $delimiters = null, $forceLowercase = null, $forceUppercase = null) {
         $str = strtolower($str);
         $delimiters = is_null($delimiters) ? static::$defaultDelimiters : $delimiters;
 
@@ -42,27 +40,21 @@ class NameCase
         $forceUppercase = is_null($forceUppercase) ? static::$defaultForceUppercase : $forceUppercase;
         $forceUppercase = array_map('strtoupper', $forceUppercase);
 
-        foreach ($delimiters as $delimiter)
-        {
+        foreach ($delimiters as $delimiter) {
             $words = explode($delimiter, $str);
             $newWords = [];
 
-            foreach ($words as $word)
-            {
-                if (in_array(strtoupper($word), $forceUppercase))
-                {
+            foreach ($words as $word) {
+                if (in_array(strtoupper($word), $forceUppercase)) {
                     $word = strtoupper($word);
-                }
-                elseif (!in_array($word, $forceLowercase))
-                {
+                } elseif (!in_array($word, $forceLowercase)) {
                     $word = ucfirst($word);
                 }
 
                 $newWords[] = $word;
             }
 
-            if (in_array(strtolower($delimiter), $forceLowercase))
-            {
+            if (in_array(strtolower($delimiter), $forceLowercase)) {
                 $delimiter = strtolower($delimiter);
             }
 

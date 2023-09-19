@@ -1,9 +1,10 @@
-<?php namespace TimMcLeod\LaravelCoreLib\Calendar;
+<?php
+
+namespace DGaitan\LaravelCoreLib\Calendar;
 
 use Illuminate\Support\Collection;
 
-class VCalendar
-{
+class VCalendar {
     /*
     |--------------------------------------------------------------------------
     | Excerpt from: https://tools.ietf.org/html/rfc2446#section-3.2
@@ -66,48 +67,42 @@ class VCalendar
     /**
      * VCalendar constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->init();
     }
 
     /**
      * Initializes fields with default values.
      */
-    public function init()
-    {
+    public function init() {
         $this->vEvents = new Collection();
     }
 
     /**
      * @param VEvent $vEvent
      */
-    public function addVEvent(VEvent $vEvent)
-    {
+    public function addVEvent(VEvent $vEvent) {
         $this->vEvents->push($vEvent);
     }
 
     /**
      * @return Collection
      */
-    public function vEvents()
-    {
+    public function vEvents() {
         return $this->vEvents;
     }
 
     /**
      * @param string $method
      */
-    public function setMethod($method)
-    {
+    public function setMethod($method) {
         $this->method = $method;
     }
 
     /**
      * @param $prodId
      */
-    public function setProdId($prodId)
-    {
+    public function setProdId($prodId) {
         $this->prodId = $prodId;
     }
 
@@ -116,8 +111,7 @@ class VCalendar
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->toIcs();
     }
 
@@ -126,8 +120,7 @@ class VCalendar
      *
      * @return string
      */
-    public function toIcs()
-    {
+    public function toIcs() {
         return
             $this->beginVCalendar() .
             $this->version() .
@@ -140,24 +133,21 @@ class VCalendar
     /**
      * @return string
      */
-    public function beginVCalendar()
-    {
+    public function beginVCalendar() {
         return 'BEGIN:VCALENDAR' . PHP_EOL;
     }
 
     /**
      * @return string
      */
-    public function version()
-    {
+    public function version() {
         return 'VERSION:' . $this->version . PHP_EOL;
     }
 
     /**
      * @return string
      */
-    public function method()
-    {
+    public function method() {
         return 'METHOD:' . $this->method . PHP_EOL;
     }
 
@@ -167,8 +157,7 @@ class VCalendar
      *
      * @return string
      */
-    public function prodId()
-    {
+    public function prodId() {
         $configProdId = config('calendar.product_id', '-//timmcleod//calendar v1.0//EN');
 
         $prodId = empty($this->prodId) ? $configProdId : $this->prodId;
@@ -179,16 +168,14 @@ class VCalendar
     /**
      * @return string
      */
-    public function vEventsToString()
-    {
+    public function vEventsToString() {
         return implode(PHP_EOL, $this->vEvents->all()) . PHP_EOL;
     }
 
     /**
      * @return string
      */
-    public function endVCalendar()
-    {
+    public function endVCalendar() {
         return 'END:VCALENDAR';
     }
 }

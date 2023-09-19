@@ -1,6 +1,6 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Database\Eloquent;
+namespace DGaitan\LaravelCoreLib\Database\Eloquent;
 
 use Crypt;
 use Exception;
@@ -9,8 +9,7 @@ use Illuminate\Support\Str;
 use Storage;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-trait FileSavable
-{
+trait FileSavable {
     /**
      * Sets the file attributes for this model and performs the actual save of the file.
      *
@@ -28,37 +27,30 @@ trait FileSavable
      * @param bool         $saveToDisk
      * @throws Exception
      */
-    public function saveWithFile(UploadedFile $file, $saveToCloud = false, $saveToDisk = true)
-    {
-        if ($this->shouldSaveField('size'))
-        {
+    public function saveWithFile(UploadedFile $file, $saveToCloud = false, $saveToDisk = true) {
+        if ($this->shouldSaveField('size')) {
             $this->{$this->getFieldColumnName('size')} = $file->getSize();
         }
 
-        if ($this->shouldSaveField('mime_type'))
-        {
+        if ($this->shouldSaveField('mime_type')) {
             $this->{$this->getFieldColumnName('mime_type')} = $file->getMimeType();
         }
 
-        if ($this->shouldSaveField('client_original_name'))
-        {
+        if ($this->shouldSaveField('client_original_name')) {
             $this->{$this->getFieldColumnName('client_original_name')} = $file->getClientOriginalName();
         }
 
         // Save the model if it doesn't already have an ID.
         if (empty($this->id)) $this->save();
 
-        if ($saveToDisk || $saveToCloud)
-        {
+        if ($saveToDisk || $saveToCloud) {
             $contents = $this->usingEncryption() ? Crypt::encrypt(file_get_contents($file)) : file_get_contents($file);
 
-            if ($saveToDisk && !$this->saveToDisk($contents))
-            {
+            if ($saveToDisk && !$this->saveToDisk($contents)) {
                 throw new Exception("Unable to save file (" . $this->id . ") to disk.");
             };
 
-            if ($saveToCloud && !$this->saveToCloud($contents))
-            {
+            if ($saveToCloud && !$this->saveToCloud($contents)) {
                 throw new Exception("Unable to save file (" . $this->id . ") to cloud.");
             };
         }
@@ -69,8 +61,7 @@ trait FileSavable
     /**
      * @return null|string
      */
-    public function getFileContents()
-    {
+    public function getFileContents() {
         $contents = null;
 
         // Try to pull file from disk first.
@@ -80,12 +71,13 @@ trait FileSavable
         if (is_null($contents) && $this->existsInCloud()) $contents = Storage::disk($this->getCloudDiskName())->get($this->getStoragePath(true));
 
         // Decrypt if needed.
-        if (!is_null($contents) && $this->usingEncryption())
-        {
+        if (!is_null($contents) && $this->usingEncryption()) {
             // If decryption fails, we'll assume the file isn't
             // encrypted on disk and we'll just skip decryption.
-            try {$contents = Crypt::decrypt($contents);}
-            catch (Exception $e) {}
+            try {
+                $contents = Crypt::decrypt($contents);
+            } catch (Exception $e) {
+            }
         }
 
         return $contents;
@@ -94,24 +86,21 @@ trait FileSavable
     /**
      * @return string
      */
-    public function getFileMimeType()
-    {
+    public function getFileMimeType() {
         return $this->{$this->getFieldColumnName('mime_type')};
     }
 
     /**
      * @return string
      */
-    public function getFileSize()
-    {
+    public function getFileSize() {
         return $this->{$this->getFieldColumnName('size')};
     }
 
     /**
      * @return string
      */
-    public function getFileClientOriginalName()
-    {
+    public function getFileClientOriginalName() {
         return $this->{$this->getFieldColumnName('client_original_name')};
     }
 
@@ -124,8 +113,7 @@ trait FileSavable
      * @param bool $includeFilename
      * @return string
      */
-    public function getStoragePath($includeFilename = false)
-    {
+    public function getStoragePath($includeFilename = false) {
         $classDir = Str::snake(Arr::last(explode('\\', get_class($this))));
         $year = $this->created_at->format('Y');
         $month = $this->created_at->format('m');
@@ -141,8 +129,7 @@ trait FileSavable
      * @param bool $includeFilename
      * @return string
      */
-    public function getFullLocalStoragePath($includeFilename = false)
-    {
+    public function getFullLocalStoragePath($includeFilename = false) {
         return Storage::disk($this->getLocalDiskName())->path($this->getStoragePath($includeFilename));
     }
 
@@ -151,8 +138,7 @@ trait FileSavable
      *
      * @return string
      */
-    public function getStoragePathFilename()
-    {
+    public function getStoragePathFilename() {
         return "$this->id";
     }
 
@@ -162,8 +148,7 @@ trait FileSavable
      * @param $content
      * @return bool
      */
-    public function saveToDisk($content)
-    {
+    public function saveToDisk($content) {
         return Storage::disk($this->getLocalDiskName())->put($this->getStoragePath(true), $content);
     }
 
@@ -173,8 +158,7 @@ trait FileSavable
      * @param $content
      * @return bool
      */
-    public function saveToCloud($content)
-    {
+    public function saveToCloud($content) {
         return Storage::disk($this->getCloudDiskName())->put($this->getStoragePath(true), $content);
     }
 
@@ -183,8 +167,7 @@ trait FileSavable
      *
      * @return bool
      */
-    public function deleteFromDisk()
-    {
+    public function deleteFromDisk() {
         return Storage::disk($this->getLocalDiskName())->delete($this->getStoragePath(true));
     }
 
@@ -193,16 +176,14 @@ trait FileSavable
      *
      * @return bool
      */
-    public function deleteFromCloud()
-    {
+    public function deleteFromCloud() {
         return Storage::disk($this->getCloudDiskName())->delete($this->getStoragePath(true));
     }
 
     /**
      * Delete from cloud and disk.
      */
-    public function deleteFile()
-    {
+    public function deleteFile() {
         if ($this->existsInCloud()) $this->deleteFromCloud();
         if ($this->existsOnDisk()) $this->deleteFromDisk();
     }
@@ -212,8 +193,7 @@ trait FileSavable
      *
      * @return bool
      */
-    public function copyFromCloudToDisk()
-    {
+    public function copyFromCloudToDisk() {
         return $this->saveToDisk(Storage::disk($this->getCloudDiskName())->get($this->getStoragePath(true)));
     }
 
@@ -222,56 +202,49 @@ trait FileSavable
      *
      * @return bool
      */
-    public function copyFromDiskToCloud()
-    {
+    public function copyFromDiskToCloud() {
         return $this->saveToCloud(Storage::disk($this->getLocalDiskName())->get($this->getStoragePath(true)));
     }
 
     /**
      * @return bool
      */
-    public function existsOnDisk()
-    {
+    public function existsOnDisk() {
         return Storage::disk($this->getLocalDiskName())->exists($this->getStoragePath(true));
     }
 
     /**
      * @return bool
      */
-    public function existsInCloud()
-    {
+    public function existsInCloud() {
         return Storage::disk($this->getCloudDiskName())->exists($this->getStoragePath(true));
     }
 
     /**
      * @return bool
      */
-    public function existsAnywhere()
-    {
+    public function existsAnywhere() {
         return $this->existsOnDisk() || $this->existsInCloud();
     }
 
     /**
      * @return bool
      */
-    public function existsNowhere()
-    {
+    public function existsNowhere() {
         return !$this->existsAnywhere();
     }
 
     /**
      * @return bool
      */
-    public function isPdf()
-    {
+    public function isPdf() {
         return strtolower($this->mime_type ?? '') == 'application/pdf';
     }
 
     /**
      * @return bool
      */
-    public function isPng()
-    {
+    public function isPng() {
         return strtolower($this->mime_type ?? '') == 'image/png';
     }
 
@@ -282,8 +255,7 @@ trait FileSavable
      *
      * @return bool
      */
-    public function usingEncryption()
-    {
+    public function usingEncryption() {
         return property_exists(static::class, 'encryptFile') && $this->encryptFile;
     }
 
@@ -300,8 +272,7 @@ trait FileSavable
      * @param string $field
      * @return bool
      */
-    protected function shouldSaveField($field)
-    {
+    protected function shouldSaveField($field) {
         if (!property_exists(static::class, 'savableFields')) return false;
 
         return array_key_exists($field, $this->savableFields);
@@ -320,8 +291,7 @@ trait FileSavable
      * @param $field
      * @return string
      */
-    protected function getFieldColumnName($field)
-    {
+    protected function getFieldColumnName($field) {
         return $this->savableFields[$field];
     }
 
@@ -331,8 +301,7 @@ trait FileSavable
      *
      * @return string
      */
-    protected function getLocalDiskName()
-    {
+    protected function getLocalDiskName() {
         if (!property_exists(static::class, 'localDiskName')) return Storage::getDefaultDriver();
 
         return $this->localDiskName;
@@ -344,8 +313,7 @@ trait FileSavable
      *
      * @return string
      */
-    protected function getCloudDiskName()
-    {
+    protected function getCloudDiskName() {
         if (!property_exists(static::class, 'cloudDiskName')) return Storage::getDefaultCloudDriver();
 
         return $this->cloudDiskName;

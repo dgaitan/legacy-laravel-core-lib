@@ -1,11 +1,10 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\View;
+namespace DGaitan\LaravelCoreLib\View;
 
 use Exception;
 
-abstract class BaseViewModel
-{
+abstract class BaseViewModel {
     /** @var array */
     protected $rules = [];
 
@@ -17,8 +16,7 @@ abstract class BaseViewModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
-    {
+    public function __construct($data = []) {
         $this->data = array_merge($this->data, $data);
         $this->validate();
     }
@@ -26,11 +24,9 @@ abstract class BaseViewModel
     /**
      * @throws Exception
      */
-    protected function validate()
-    {
+    protected function validate() {
         $validator = validator($this->data, $this->rules);
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             throw new Exception('Invalid data: ' . $validator->getMessageBag()->first());
         }
     }
@@ -39,8 +35,7 @@ abstract class BaseViewModel
      * @param string $field
      * @return mixed
      */
-    public function __get($field)
-    {
+    public function __get($field) {
         return isset($this->data[$field]) ? $this->data[$field] : null;
     }
 
@@ -48,8 +43,7 @@ abstract class BaseViewModel
      * @param $field
      * @return bool
      */
-    public function __isset($field)
-    {
+    public function __isset($field) {
         return array_key_exists($field, $this->data);
     }
 
@@ -64,8 +58,7 @@ abstract class BaseViewModel
      * @param bool   $default
      * @return string
      */
-    public function checkboxChecked($field, $default)
-    {
+    public function checkboxChecked($field, $default) {
         return $this->checkboxIsChecked($field, $default) ? 'checked' : '';
     }
 
@@ -76,8 +69,7 @@ abstract class BaseViewModel
      * @param bool   $default
      * @return bool
      */
-    public function checkboxIsChecked($field, $default)
-    {
+    public function checkboxIsChecked($field, $default) {
         // if old input exists, use it the old value, otherwise, use the default
         if ($this->hasOldInput()) return old($field) === 'on';
         return !!$default;
@@ -88,8 +80,7 @@ abstract class BaseViewModel
      *
      * @return bool
      */
-    public function hasOldInput()
-    {
+    public function hasOldInput() {
         return count(old()) > 0;
     }
 
@@ -105,8 +96,7 @@ abstract class BaseViewModel
      * @param array  $default
      * @return string
      */
-    public function checkboxInArrayChecked($field, $value, $default = [])
-    {
+    public function checkboxInArrayChecked($field, $value, $default = []) {
         return $this->checkboxInArrayIsChecked($field, $value, $default) ? 'checked' : '';
     }
 
@@ -118,8 +108,7 @@ abstract class BaseViewModel
      * @param array  $default
      * @return bool
      */
-    public function checkboxInArrayIsChecked($field, $value, $default = [])
-    {
+    public function checkboxInArrayIsChecked($field, $value, $default = []) {
         if ($this->hasOldInput()) return in_array($value, old($field, []));
         return in_array($value, $default);
     }

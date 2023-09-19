@@ -1,10 +1,11 @@
-<?php namespace TimMcLeod\LaravelCoreLib\Calendar;
+<?php
+
+namespace DGaitan\LaravelCoreLib\Calendar;
 
 use Carbon\Carbon;
-use TimMcLeod\LaravelCoreLib\Calendar\IcsFormatter as Format;
+use DGaitan\LaravelCoreLib\Calendar\IcsFormatter as Format;
 
-class VEvent
-{
+class VEvent {
     /*
     |--------------------------------------------------------------------------
     | Excerpt from: http://www.ietf.org/rfc/rfc2445.txt (4.8.1.11 Status)
@@ -59,16 +60,14 @@ class VEvent
     /**
      * VEvent constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->init();
     }
 
     /**
      * Initializes fields with default values.
      */
-    public function init()
-    {
+    public function init() {
         $this->uid = uniqid();
         $this->sequence = time();
         $this->dtStart = Carbon::now();
@@ -80,16 +79,14 @@ class VEvent
     /**
      * @return string
      */
-    public function title()
-    {
+    public function title() {
         return $this->summary();
     }
 
     /**
      * @return string
      */
-    public function summary()
-    {
+    public function summary() {
         if (empty($this->summary)) return '';
 
         return 'SUMMARY:' . Format::escape($this->summary) . PHP_EOL;
@@ -98,104 +95,91 @@ class VEvent
     /**
      * @param string $title
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->setSummary($title);
     }
 
     /**
      * @param string $summary
      */
-    public function setSummary($summary)
-    {
+    public function setSummary($summary) {
         $this->summary = $summary;
     }
 
     /**
      * @param string $description
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
     }
 
     /**
      * @param string $uid
      */
-    public function setUid($uid)
-    {
+    public function setUid($uid) {
         $this->uid = $uid;
     }
 
     /**
      * @param Carbon $dtStart
      */
-    public function setDtStart(Carbon $dtStart)
-    {
+    public function setDtStart(Carbon $dtStart) {
         $this->dtStart = $dtStart;
     }
 
     /**
      * @param Carbon $dtEnd
      */
-    public function setDtEnd(Carbon $dtEnd)
-    {
+    public function setDtEnd(Carbon $dtEnd) {
         $this->dtEnd = $dtEnd;
     }
 
     /**
      * @param bool $allDay
      */
-    public function allDayEvent($allDay)
-    {
+    public function allDayEvent($allDay) {
         $this->allDay = $allDay;
     }
 
     /**
      * @param int $sequence
      */
-    public function setSequence($sequence)
-    {
+    public function setSequence($sequence) {
         $this->sequence = $sequence;
     }
 
     /**
      * @param Carbon $lastModified
      */
-    public function setLastModified(Carbon $lastModified)
-    {
+    public function setLastModified(Carbon $lastModified) {
         $this->lastModified = $lastModified;
     }
 
     /**
      * @param Carbon $dtStamp
      */
-    public function setDtStamp(Carbon $dtStamp)
-    {
+    public function setDtStamp(Carbon $dtStamp) {
         $this->dtStamp = $dtStamp;
     }
 
     /**
      * @param string $location
      */
-    public function setLocation($location)
-    {
+    public function setLocation($location) {
         $this->location = $location;
     }
 
     /**
      * @param string $url
      */
-    public function setUrl($url)
-    {
+    public function setUrl($url) {
         $this->url = $url;
     }
 
     /**
      * @param string $status
      */
-    public function setStatus($status)
-    {
+    public function setStatus($status) {
         $this->status = $status;
     }
 
@@ -204,8 +188,7 @@ class VEvent
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return $this->toIcs();
     }
 
@@ -214,8 +197,7 @@ class VEvent
      *
      * @return string
      */
-    public function toIcs()
-    {
+    public function toIcs() {
         return
             $this->beginVEvent() .
             $this->summary() .
@@ -235,16 +217,14 @@ class VEvent
     /**
      * @return string
      */
-    public function beginVEvent()
-    {
+    public function beginVEvent() {
         return 'BEGIN:VEVENT' . PHP_EOL;
     }
 
     /**
      * @return string
      */
-    public function description()
-    {
+    public function description() {
         if (empty($this->description)) return '';
 
         return 'DESCRIPTION:' . Format::escape($this->description) . PHP_EOL;
@@ -253,8 +233,7 @@ class VEvent
     /**
      * @return string
      */
-    public function uid()
-    {
+    public function uid() {
         if (empty($this->uid)) return '';
 
         return 'UID:' . $this->uid . PHP_EOL;
@@ -263,8 +242,7 @@ class VEvent
     /**
      * @return string
      */
-    public function status()
-    {
+    public function status() {
         if (empty($this->status)) return '';
 
         return 'STATUS:' . $this->status . PHP_EOL;
@@ -273,8 +251,7 @@ class VEvent
     /**
      * @return string
      */
-    public function dtStart()
-    {
+    public function dtStart() {
         if (empty($this->dtStart)) return '';
 
         return Format::dateForProperty('DTSTART', $this->dtStart, $this->includeTimeInStartEndDates()) . PHP_EOL;
@@ -283,16 +260,14 @@ class VEvent
     /**
      * @return bool
      */
-    protected function includeTimeInStartEndDates()
-    {
+    protected function includeTimeInStartEndDates() {
         return !$this->allDay;
     }
 
     /**
      * @return string
      */
-    public function dtEnd()
-    {
+    public function dtEnd() {
         if (empty($this->dtEnd)) return '';
 
         return Format::dateForProperty('DTEND', $this->dtEnd, $this->includeTimeInStartEndDates()) . PHP_EOL;
@@ -301,8 +276,7 @@ class VEvent
     /**
      * @return string
      */
-    public function dtStamp()
-    {
+    public function dtStamp() {
         if (empty($this->dtStamp)) return '';
 
         return 'DTSTAMP:' . $this->dtStamp->timezone('UTC')->format('Ymd\THis\Z') . PHP_EOL;
@@ -311,8 +285,7 @@ class VEvent
     /**
      * @return string
      */
-    public function sequence()
-    {
+    public function sequence() {
         if (empty($this->sequence)) return '';
 
         return 'SEQUENCE:' . $this->sequence . PHP_EOL;
@@ -321,8 +294,7 @@ class VEvent
     /**
      * @return string
      */
-    public function lastModified()
-    {
+    public function lastModified() {
         if (empty($this->lastModified)) return '';
 
         return Format::dateForProperty('LAST-MODIFIED', $this->lastModified, true) . PHP_EOL;
@@ -331,8 +303,7 @@ class VEvent
     /**
      * @return string
      */
-    public function url()
-    {
+    public function url() {
         if (empty($this->url)) return '';
 
         return 'URL:' . Format::escape($this->url) . PHP_EOL;
@@ -341,8 +312,7 @@ class VEvent
     /**
      * @return string
      */
-    public function location()
-    {
+    public function location() {
         if (empty($this->location)) return '';
 
         return 'LOCATION:' . Format::escape($this->location) . PHP_EOL;
@@ -351,8 +321,7 @@ class VEvent
     /**
      * @return string
      */
-    public function endVEvent()
-    {
+    public function endVEvent() {
         return 'END:VEVENT';
     }
 }

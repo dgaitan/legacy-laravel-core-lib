@@ -1,39 +1,33 @@
 <?php
-namespace TimMcLeod\LaravelCoreLib\Database\Eloquent;
+
+namespace DGaitan\LaravelCoreLib\Database\Eloquent;
 
 use Exception;
 use Ramsey\Uuid\Uuid;
 
-trait Uuidable
-{
+trait Uuidable {
     /**
      * Binds creating/saving events to create UUIDs (and also prevent them from being overwritten).
      *
      * @return void
      */
-    public static function bootUuidable()
-    {
-        static::creating(function ($model)
-        {
+    public static function bootUuidable() {
+        static::creating(function ($model) {
             $model->verifyUuidsProperty();
 
-            foreach ($model->uuids as $attribute)
-            {
+            foreach ($model->uuids as $attribute) {
                 $model->{$attribute} = Uuid::uuid4()->toString();
             }
         });
 
-        static::saving(function ($model)
-        {
+        static::saving(function ($model) {
             $model->verifyUuidsProperty();
 
-            foreach ($model->uuids as $attribute)
-            {
+            foreach ($model->uuids as $attribute) {
                 // Prevent changes to the UUID.
                 $originalUuid = $model->getOriginal($attribute);
 
-                if ($originalUuid !== $model->{$attribute})
-                {
+                if ($originalUuid !== $model->{$attribute}) {
                     $model->{$attribute} = $originalUuid;
                 }
 
@@ -46,10 +40,8 @@ trait Uuidable
     /**
      * @throws Exception
      */
-    public function verifyUuidsProperty()
-    {
-        if (!$this->uuids)
-        {
+    public function verifyUuidsProperty() {
+        if (!$this->uuids) {
             $c = get_class($this);
 
             throw new Exception("When using the Uuidable trait, the uuids array property must be defined in: $c");

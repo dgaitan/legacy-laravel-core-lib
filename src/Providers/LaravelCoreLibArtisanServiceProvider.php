@@ -1,12 +1,11 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Providers;
+namespace DGaitan\LaravelCoreLib\Providers;
 
 use Illuminate\Foundation\Providers\ArtisanServiceProvider;
-use TimMcLeod\LaravelCoreLib\Generators\ViewModelMakeCommand;
+use DGaitan\LaravelCoreLib\Generators\ViewModelMakeCommand;
 
-class LaravelCoreLibArtisanServiceProvider extends ArtisanServiceProvider
-{
+class LaravelCoreLibArtisanServiceProvider extends ArtisanServiceProvider {
     /**
      * The commands to be registered.
      *
@@ -28,10 +27,8 @@ class LaravelCoreLibArtisanServiceProvider extends ArtisanServiceProvider
      *
      * @return void
      */
-    protected function registerViewModelMakeCommand()
-    {
-        $this->app->singleton('command.view-model.make', function ($app)
-        {
+    protected function registerViewModelMakeCommand() {
+        $this->app->singleton('command.view-model.make', function ($app) {
             return new ViewModelMakeCommand($app['files']);
         });
     }

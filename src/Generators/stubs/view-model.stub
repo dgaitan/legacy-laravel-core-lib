@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use TimMcLeod\LaravelCoreLib\View\BaseViewModel;
+use DGaitan\LaravelCoreLib\View\BaseViewModel;
 
 class DummyClass extends BaseViewModel
 {

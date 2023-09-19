@@ -1,6 +1,6 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Database\Eloquent;
+namespace DGaitan\LaravelCoreLib\Database\Eloquent;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -13,18 +13,15 @@ use Illuminate\Support\Str;
  * This can be helpful if we want to log the changes somewhere for
  * later review.
  */
-trait ChangeTrackable
-{
+trait ChangeTrackable {
     /** @var array */
     protected $trackedChanges = [];
 
     /**
      * Boot trait.
      */
-    public static function bootChangeTrackable()
-    {
-        static::saving(function ($model)
-        {
+    public static function bootChangeTrackable() {
+        static::saving(function ($model) {
             $model->trackChanges();
         });
     }
@@ -32,14 +29,11 @@ trait ChangeTrackable
     /**
      * Track current state of the model.
      */
-    public function trackChanges()
-    {
-        if ($this->isDirty())
-        {
+    public function trackChanges() {
+        if ($this->isDirty()) {
             $newValues = $this->getDirty();
 
-            foreach ($newValues as $key => $value)
-            {
+            foreach ($newValues as $key => $value) {
                 $new = $this->getAttributeValue($key);
                 $old = $this->getOriginalAttributeValue($key);
 
@@ -56,8 +50,7 @@ trait ChangeTrackable
      * @param  string $key
      * @return mixed
      */
-    public function getOriginalAttributeValue($key)
-    {
+    public function getOriginalAttributeValue($key) {
         $value = $this->getOriginal($key);
 
         if ($this->hasGetMutator($key)) return $this->mutateAttribute($key, $value);
@@ -74,8 +67,7 @@ trait ChangeTrackable
      * @param mixed  $old
      * @param mixed  $new
      */
-    protected function trackChange($key, $old, $new)
-    {
+    protected function trackChange($key, $old, $new) {
         $hasAttribute = Arr::has($this->trackedChanges, "$key.old");
 
         // Only set old attribute if it doesn't already exist.
@@ -93,8 +85,7 @@ trait ChangeTrackable
      *
      * @return array
      */
-    public function getTrackedChangesArrayForAll()
-    {
+    public function getTrackedChangesArrayForAll() {
         return $this->trackedChanges;
     }
 
@@ -105,8 +96,7 @@ trait ChangeTrackable
      *
      * @return bool
      */
-    public function hasTrackedChanges()
-    {
+    public function hasTrackedChanges() {
         return !empty($this->getTrackedChangesArray());
     }
 
@@ -120,8 +110,7 @@ trait ChangeTrackable
      *
      * @return array
      */
-    public function getTrackedChangesArray()
-    {
+    public function getTrackedChangesArray() {
         $attributes = property_exists(static::class, 'trackable') ? $this->trackable : [];
 
         return $this->getTrackedChangesArrayFor($attributes);
@@ -134,8 +123,7 @@ trait ChangeTrackable
      * @param array $attributes
      * @return array
      */
-    public function getTrackedChangesArrayFor($attributes = [])
-    {
+    public function getTrackedChangesArrayFor($attributes = []) {
         return empty($attributes) ? $this->trackedChanges : Arr::only($this->trackedChanges, $attributes);
     }
 
@@ -145,8 +133,7 @@ trait ChangeTrackable
      *
      * @return bool
      */
-    public function hasAnyTrackedChanges()
-    {
+    public function hasAnyTrackedChanges() {
         return !empty($this->trackedChanges);
     }
 
@@ -158,8 +145,7 @@ trait ChangeTrackable
      * @param array $attributes
      * @return bool
      */
-    public function hasAnyTrackedChangesFor($attributes = [])
-    {
+    public function hasAnyTrackedChangesFor($attributes = []) {
         return !empty(Arr::only($this->trackedChanges, $attributes));
     }
 
@@ -178,7 +164,10 @@ trait ChangeTrackable
      * @return string
      */
     public function getTrackedChanges(
-        $format = '{attribute}: {old} > {new}', $delimiter = ' | ', $emptyOld = '', $emptyNew = ''
+        $format = '{attribute}: {old} > {new}',
+        $delimiter = ' | ',
+        $emptyOld = '',
+        $emptyNew = ''
     ) {
         $attributes = property_exists(static::class, 'trackable') ? $this->trackable : [];
 
@@ -198,7 +187,11 @@ trait ChangeTrackable
      * @return string
      */
     public function getTrackedChangesFor(
-        $attributes = [], $format = '{attribute}: {old} > {new}', $delimiter = ' | ', $emptyOld = '', $emptyNew = ''
+        $attributes = [],
+        $format = '{attribute}: {old} > {new}',
+        $delimiter = ' | ',
+        $emptyOld = '',
+        $emptyNew = ''
     ) {
         $changes = empty($attributes) ? $this->trackedChanges : Arr::only($this->trackedChanges, $attributes);
 
@@ -216,21 +209,27 @@ trait ChangeTrackable
      * @return string
      */
     protected function getChangesString(
-        $changes, $format = '{attribute}: {old} > {new}', $delimiter = ' | ', $emptyOld = '', $emptyNew = ''
+        $changes,
+        $format = '{attribute}: {old} > {new}',
+        $delimiter = ' | ',
+        $emptyOld = '',
+        $emptyNew = ''
     ) {
         $str = '';
         $i = 0;
         $count = count($changes);
 
-        foreach ($changes as $key => $value)
-        {
+        foreach ($changes as $key => $value) {
             $i++;
 
             $old = ($value['old'] === '' || $value['old'] === null) ? $emptyOld : $value['old'];
             $new = ($value['new'] === '' || $value['new'] === null) ? $emptyNew : $value['new'];
 
-            $str .= str_replace(['{attribute}', '{label}', '{old}', '{new}'],
-                [$key, Str::title(str_replace('_', ' ', $key)), $old, $new], $format);
+            $str .= str_replace(
+                ['{attribute}', '{label}', '{old}', '{new}'],
+                [$key, Str::title(str_replace('_', ' ', $key)), $old, $new],
+                $format
+            );
 
             if ($i < $count) $str .= $delimiter;
         }
@@ -249,7 +248,10 @@ trait ChangeTrackable
      * @return string
      */
     public function getTrackedChangesForAll(
-        $format = '{attribute}: {old} > {new}', $delimiter = ' | ', $emptyOld = '', $emptyNew = ''
+        $format = '{attribute}: {old} > {new}',
+        $delimiter = ' | ',
+        $emptyOld = '',
+        $emptyNew = ''
     ) {
         return $this->getChangesString($this->trackedChanges, $format, $delimiter, $emptyOld, $emptyNew);
     }

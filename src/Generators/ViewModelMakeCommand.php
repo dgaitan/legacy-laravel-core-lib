@@ -1,11 +1,10 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Generators;
+namespace DGaitan\LaravelCoreLib\Generators;
 
 use Illuminate\Console\GeneratorCommand;
 
-class ViewModelMakeCommand extends GeneratorCommand
-{
+class ViewModelMakeCommand extends GeneratorCommand {
     /**
      * The console command name.
      *
@@ -33,8 +32,7 @@ class ViewModelMakeCommand extends GeneratorCommand
      * @param  string $rawName
      * @return bool
      */
-    protected function alreadyExists($rawName)
-    {
+    protected function alreadyExists($rawName) {
         return class_exists($rawName);
     }
 
@@ -43,8 +41,7 @@ class ViewModelMakeCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getStub()
-    {
+    protected function getStub() {
         return __DIR__ . '/stubs/view-model.stub';
     }
 
@@ -54,8 +51,7 @@ class ViewModelMakeCommand extends GeneratorCommand
      * @param  string $rootNamespace
      * @return string
      */
-    protected function getDefaultNamespace($rootNamespace)
-    {
+    protected function getDefaultNamespace($rootNamespace) {
         return $rootNamespace . '\ViewModels';
     }
 }

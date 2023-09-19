@@ -1,14 +1,13 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Jobs;
+namespace DGaitan\LaravelCoreLib\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Storage;
 
-class CopyLocalFileToCloud implements ShouldQueue
-{
+class CopyLocalFileToCloud implements ShouldQueue {
     use InteractsWithQueue, Queueable;
 
     /** @var string */
@@ -23,8 +22,7 @@ class CopyLocalFileToCloud implements ShouldQueue
      * @param string $path
      * @param bool   $deleteAfterCopy
      */
-    public function __construct($path, $deleteAfterCopy = false)
-    {
+    public function __construct($path, $deleteAfterCopy = false) {
         $this->path = $path;
         $this->deleteAfterCopy = $deleteAfterCopy;
     }
@@ -34,12 +32,10 @@ class CopyLocalFileToCloud implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
-    {
+    public function handle() {
         Storage::cloud()->put($this->path, Storage::disk()->get($this->path));
 
-        if ($this->deleteAfterCopy)
-        {
+        if ($this->deleteAfterCopy) {
             Storage::disk()->delete($this->path);
         }
     }
@@ -47,16 +43,14 @@ class CopyLocalFileToCloud implements ShouldQueue
     /**
      * @return string
      */
-    public function getPath()
-    {
+    public function getPath() {
         return $this->path;
     }
 
     /**
      * @return bool
      */
-    public function willDeleteAfterCopy()
-    {
+    public function willDeleteAfterCopy() {
         return $this->deleteAfterCopy;
     }
 }

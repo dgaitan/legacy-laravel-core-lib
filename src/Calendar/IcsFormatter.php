@@ -1,15 +1,15 @@
-<?php namespace TimMcLeod\LaravelCoreLib\Calendar;
+<?php
+
+namespace DGaitan\LaravelCoreLib\Calendar;
 
 use Carbon\Carbon;
 
-class IcsFormatter
-{
+class IcsFormatter {
     /**
      * @param string $string
      * @return string
      */
-    public static function escape($string)
-    {
+    public static function escape($string) {
         // Escape single backslashes
         $string = str_replace("\\", "\\\\", $string);
 
@@ -34,16 +34,12 @@ class IcsFormatter
      * @param bool   $includeTime
      * @return string
      */
-    public static function dateForProperty($property, Carbon $dt, $includeTime = false)
-    {
+    public static function dateForProperty($property, Carbon $dt, $includeTime = false) {
         $dt->timezone('UTC');
 
-        if ($includeTime)
-        {
+        if ($includeTime) {
             return "$property:" . $dt->format('Ymd\THis\Z');
-        }
-        else
-        {
+        } else {
             return "$property;VALUE=DATE:" . $dt->format('Ymd');
         }
     }

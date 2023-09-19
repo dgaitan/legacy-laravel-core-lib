@@ -1,25 +1,22 @@
 <?php
 
-namespace TimMcLeod\LaravelCoreLib\Providers;
+namespace DGaitan\LaravelCoreLib\Providers;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use TimMcLeod\LaravelCoreLib\Calendar\VCalendar;
+use DGaitan\LaravelCoreLib\Calendar\VCalendar;
 
-class LaravelCoreLibServiceProvider extends ServiceProvider
-{
+class LaravelCoreLibServiceProvider extends ServiceProvider {
     /**
      * Bootstrap the application services.
      *
      * @param ResponseFactory $factory
      */
-    public function boot(ResponseFactory $factory)
-    {
+    public function boot(ResponseFactory $factory) {
         // A macro for an ICS response.
         // Ex: Response::ics($calendar)
-        $factory->macro('ics', function (VCalendar $calendar) use ($factory)
-        {
+        $factory->macro('ics', function (VCalendar $calendar) use ($factory) {
             $filename = Str::slug($calendar->vEvents()->first()) . '.ics';
             $headers = [
                 'Content-type'        => 'text/calendar; charset=utf-8',
@@ -41,8 +38,7 @@ class LaravelCoreLibServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
+    public function register() {
         //
     }
 }
